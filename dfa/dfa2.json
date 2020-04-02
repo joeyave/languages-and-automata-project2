@@ -1,0 +1,27 @@
+{
+  "alphabet": [
+    "a",
+    "b"
+  ],
+  "transitions": [
+    [
+      "q0",
+      "a",
+      "q1-q2"
+    ],
+    [
+      "q1-q2",
+      "a",
+      "q1-q2"
+    ],
+    [
+      "q1-q2",
+      "b",
+      "q0"
+    ]
+  ],
+  "initial_state": "q0",
+  "accepting_states": [
+    "q1-q2"
+  ]
+}

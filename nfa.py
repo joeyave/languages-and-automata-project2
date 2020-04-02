@@ -18,7 +18,6 @@ class Nfa:
         with open(file_name, 'r') as f:
             nfa_dict = json.load(f)
 
-        self.states = nfa_dict['states']
         self.alphabet = nfa_dict['alphabet']
         self.transitions = {}
         for transition in nfa_dict['transitions']:
@@ -42,7 +41,7 @@ class Nfa:
                     if (dfa_substate, dfa_symbol) in self.transitions and \
                             self.transitions[(dfa_substate, dfa_symbol)] not in new_state:
                         for transition in self.transitions[(dfa_substate, dfa_symbol)]:
-                            epsilon_transition_state = epsilon_closure(transition, self.transitions)
+                            epsilon_transition_state = epsilon_closure([transition], self.transitions)
                             if epsilon_transition_state not in new_state:
                                 new_state.append(epsilon_transition_state)
                             # if self.transitions[(transition, "eps")] not in new_state:
@@ -66,7 +65,6 @@ class Nfa:
                     dfa_accepting_states.append("-".join(dfa_state))
 
         dfa = dict()
-        dfa["states"] = len(dfa_states)
         dfa["alphabet"] = dfa_alphabet
         dfa["transitions"] = dfa_t_func
         dfa["initial_state"] = "-".join(dfa_initial_state)
