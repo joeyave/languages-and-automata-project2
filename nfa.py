@@ -1,11 +1,16 @@
 import json
 from itertools import chain
-import pandas as pd
 
-def epsilon_closure(transitions, state):
+
+def epsilon_closure(state, transitions):
     closure = []
-    if "eps" in transitions:
-        closure.append(state)
+    for substate in state:
+        if (substate, "eps") in transitions:
+            closure.append(substate)
+            closure.extend(epsilon_closure(transitions[(substate, "eps")], transitions))
+        if substate not in closure:
+            closure.append(substate)
+    return closure
 
 
 class Nfa:
@@ -24,9 +29,9 @@ class Nfa:
     def convert_to_dfa(self, file_name):
         dfa_alphabet = self.alphabet
         dfa_t_func = []
-        dfa_initial_state = self.initial_state
+        dfa_initial_state = epsilon_closure([self.initial_state], self.transitions)
         dfa_accepting_states = []
-        dfa_states = [(dfa_initial_state,)]
+        dfa_states = [tuple(dfa_initial_state)]
 
         dfa_transitions = {}
 
@@ -37,8 +42,11 @@ class Nfa:
                     if (dfa_substate, dfa_symbol) in self.transitions and \
                             self.transitions[(dfa_substate, dfa_symbol)] not in new_state:
                         for transition in self.transitions[(dfa_substate, dfa_symbol)]:
-                            if self.transitions[(transition, "eps")] not in new_state:
-                                new_state.append(self.transitions[(transition, "eps")])
+                            epsilon_transition_state = epsilon_closure(transition, self.transitions)
+                            if epsilon_transition_state not in new_state:
+                                new_state.append(epsilon_transition_state)
+                            # if self.transitions[(transition, "eps")] not in new_state:
+                            #     new_state.append(self.transitions[(transition, "eps")])
 
                 if new_state:
                     new_state = list(chain.from_iterable(new_state))
@@ -61,7 +69,7 @@ class Nfa:
         dfa["states"] = len(dfa_states)
         dfa["alphabet"] = dfa_alphabet
         dfa["transitions"] = dfa_t_func
-        dfa["initial_state"] = dfa_initial_state
+        dfa["initial_state"] = "-".join(dfa_initial_state)
         dfa["accepting_states"] = dfa_accepting_states
 
         with open(file_name, 'w') as f:
