@@ -1,3 +1,10 @@
-# 1. parse nfa from file
-# 2. convert nfa to dfa
-# 3. write dfa to file
+from nfa import *
+
+
+def main():
+    nfa = Nfa("nfa.json")
+    nfa.convert_to_dfa("dfa.json")
+
+
+if __name__ == "__main__":
+    main()
