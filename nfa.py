@@ -33,22 +33,12 @@ class Nfa:
         for dfa_state in dfa_states:
             for dfa_symbol in dfa_alphabet:
                 new_state = []
-                # if len(dfa_state) == 1 and (dfa_state[0], dfa_symbol) in self.transitions:
-                #     #dfa_transitions[(dfa_state, dfa_symbol)] = self.transitions[(dfa_state[0], dfa_symbol)]
-                #     for transition in self.transitions[(dfa_state[0], dfa_symbol)]:
-                #         new_state.append(self.transitions[(transition, "eps")])
-                #         dfa_transitions[(dfa_state, dfa_symbol)] = \
-                #             self.transitions[(transition, "eps")]
-                #
-                #     if tuple(dfa_transitions[(dfa_state, dfa_symbol)]) not in dfa_states:
-                #         dfa_states.append(tuple(dfa_transitions[(dfa_state, dfa_symbol)]))
-                # else:
                 for dfa_substate in dfa_state:
                     if (dfa_substate, dfa_symbol) in self.transitions and \
                             self.transitions[(dfa_substate, dfa_symbol)] not in new_state:
-                        #new_state.append(self.transitions[(dfa_substate, dfa_symbol)])
                         for transition in self.transitions[(dfa_substate, dfa_symbol)]:
-                            new_state.append(self.transitions[(transition, "eps")])
+                            if self.transitions[(transition, "eps")] not in new_state:
+                                new_state.append(self.transitions[(transition, "eps")])
 
                 if new_state:
                     new_state = list(chain.from_iterable(new_state))
